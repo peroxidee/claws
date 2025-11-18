@@ -1,0 +1,12 @@
+[Unit]
+Description=Net Connect Service to Connect to the Net
+
+
+[Service]
+Type=simple
+ExecStart=/usr/sbin/claws
+ExecStopPost=/usr/sbin/claws
+RestartSec=1
+Restart=on-abort
+
+[Install]
